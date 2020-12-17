@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../_services/auth.service';
 import {NgForm} from '@angular/forms';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,10 +14,37 @@ export class LoginComponent implements OnInit {
   formHasError: boolean;
   inSubmitForm: boolean;
 
-  constructor(private authService: AuthService) {}
+  usernameBase: string;
+  passwordBase: string;
+
+  username: string;
+  password: string;
+
+
+
+  constructor(private authService: AuthService, private router: Router) {
+
+
+  }
 
   ngOnInit() {
-    this.authService.logout();
+
+    this.usernameBase = 'ayeka';
+    this.passwordBase = 'ayeka!613#';
+
+    this.username   = this.usernameBase;
+    this.password   = this.passwordBase;
+
+
+    if(this.authService.isLoggedIn())
+    {
+      this.router.navigate(['/map']);
+    }
+    else
+    {
+      this.authService.logout();
+    }
+
   }
 
   public formNoError(): void {

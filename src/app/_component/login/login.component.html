@@ -12,12 +12,12 @@
 					<form (ngSubmit)="login(formLogin)" #formLogin='ngForm' (change)="formNoError()" (keypress)="formNoError()">
 
 						<div class='form-group'>
-							<label for='email'>Email address</label>
-							<input type='email' class='form-control' id='email' name='email' placeholder='Enter email' ngModel required #email="ngModel"  required  />
+							<label for='username'>Username</label>
+							<input type='username' class='form-control' id='username' name='username'   required [(ngModel)]="username"  required  />
             </div>
 							<div class='form-group'>
 								<label for='password'>Password</label>
-								<input type='password' class='form-control' id='password' name='password' placeholder='Password' ngModel required #password="ngModel" required />
+								<input type='password' class='form-control' id='password' name='password'  required [(ngModel)]="password" required />
             </div>
 								<div class='form-group'>
 									<small id='errorText' class='text-danger' *ngIf="formHasError">
@@ -26,6 +26,17 @@
 								</div>
 								<button type='submit' class='btn btn-primary'>Submit</button>
 					</form>
+          <div class="row">
+            <div class="col-2">
+              Access
+            </div>
+            <div class="col-2">
+              {{this.usernameBase}}
+            </div>
+            <div class="col-4">
+              {{this.passwordBase}}
+            </div>
+          </div>
 
 
 				</div>

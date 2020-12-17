@@ -10,9 +10,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { LoginComponent } from './_component/login/login.component';
 import { DashboardComponent } from './_component/dashboard/dashboard.component';
 import { APP_BASE_HREF } from '@angular/common';
+import { MapComponent } from './_component/map/map.component';
+
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, DashboardComponent],
+  declarations: [AppComponent, LoginComponent, DashboardComponent, MapComponent],
   imports: [
     BrowserModule,
     CommonModule,
@@ -21,11 +26,9 @@ import { APP_BASE_HREF } from '@angular/common';
     AppRoutingModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => {
-          return localStorage.getItem('access_token');
-        },
+        tokenGetter: tokenGetter,
         allowedDomains: [''],
-        disallowedRoutes: ['auth/login']
+        disallowedRoutes: ['']
       }
     })
   ],

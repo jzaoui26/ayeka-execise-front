@@ -53,7 +53,7 @@ export class AuthService {
   setUser(resp: LoginResponse) {
     localStorage.setItem('name', resp.name);
     localStorage.setItem('access_token', resp.access_token);
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/map']);
   }
 
   // Checking if token is set
@@ -64,7 +64,7 @@ export class AuthService {
   // After clearing localStorage redirect to login screen
   logout() {
     localStorage.clear();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/login']);
   }
 
   // Get data from server for Dashboard
