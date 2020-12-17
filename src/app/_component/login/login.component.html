@@ -1,0 +1,35 @@
+<div class='container' style='display: flex;justify-content: center;align-items: center;height: 100vh;'>
+
+	<div style='width: 50%;'>
+		<div class='spinner-border' *ngIf='inSubmitForm'>
+			<span class='sr-only'>Loading...</span>
+		</div>
+		<div class='card'>
+			<div class='card-body'>
+
+				<h5 class='card-title'>Login Form</h5>
+				<div class='card-text'>
+					<form (ngSubmit)="login(formLogin)" #formLogin='ngForm' (change)="formNoError()" (keypress)="formNoError()">
+
+						<div class='form-group'>
+							<label for='email'>Email address</label>
+							<input type='email' class='form-control' id='email' name='email' placeholder='Enter email' ngModel required #email="ngModel"  required  />
+            </div>
+							<div class='form-group'>
+								<label for='password'>Password</label>
+								<input type='password' class='form-control' id='password' name='password' placeholder='Password' ngModel required #password="ngModel" required />
+            </div>
+								<div class='form-group'>
+									<small id='errorText' class='text-danger' *ngIf="formHasError">
+                    Your form has an error, try again
+                </small>
+								</div>
+								<button type='submit' class='btn btn-primary'>Submit</button>
+					</form>
+
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

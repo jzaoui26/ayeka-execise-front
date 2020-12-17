@@ -62,7 +62,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ayeka-execise-front:build"
+            "browserTarget": "ayeka-execise-front:build",
+            "proxyConfig": "proxy.conf.js"
           },
           "configurations": {
             "production": {
@@ -119,6 +120,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "ayeka-execise-front"
+    }
+  },
+  "defaultProject": "ayeka-execise-front",
+  "cli": {
+    "analytics": false
+  }
 }
