@@ -8,11 +8,16 @@
       </h5>
       <div>
         <div class="map"
+             id="mapLeafleft"
              leaflet
+             #mapLeafleft
              [leafletOptions]="optionsMap"
-             [leafletLayersControl]="layersControl">
+             [leafletLayersControl]="layersControl"
+             (leafletMapReady)="onMapReady($event)">
 
-          <div *ngFor="let deviceOne of deviceArr" [leafletLayer]="deviceOne"></div>
+          <div *ngFor="let deviceOne of deviceArr" [leafletLayer]="deviceOne" [id]="">
+
+          </div>
         </div>
 
       </div>
