@@ -14,8 +14,8 @@ export class LoginComponent implements OnInit {
   formHasError: boolean;
   inSubmitForm: boolean;
 
-  usernameBase: string;
-  passwordBase: string;
+  usernameBase: string = 'ayeka';
+  passwordBase: string = 'ayeka!613#';
 
   username: string;
   password: string;
@@ -28,9 +28,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.usernameBase = 'ayeka';
-    this.passwordBase = 'ayeka!613#';
 
     this.username   = this.usernameBase;
     this.password   = this.passwordBase;
