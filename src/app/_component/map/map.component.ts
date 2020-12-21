@@ -28,15 +28,12 @@ export class MapComponent implements OnInit {
 
   public deviceInProgress: any;
 
-  // Define our base layers so we can reference them multiple times
+  // Define our base layers
   streetMaps = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     detectRetina: true,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   });
-  wMaps = L.tileLayer('http://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png', {
-    detectRetina: true,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  });
+
 
   iconBase = {
     icon: icon({
@@ -47,17 +44,12 @@ export class MapComponent implements OnInit {
     })
   };
 
-
-
   // Layers control object with our two base layers and the three overlay layers
   layersControl = {
     baseLayers: {
-      'Street Maps': this.streetMaps,
-      'Wikimedia Maps': this.wMaps
+      'Street Maps': this.streetMaps
     }
   };
-
-
 
 
   constructor(private authService: AuthService,  private http: HttpClient) {}
@@ -75,19 +67,22 @@ export class MapComponent implements OnInit {
     };
 
     this.http.get<any>('api/sites').subscribe(data => {
-         let i, objMarker, latitude, longitude, dataFinal, identifier;
+         let i, objMarker, latitude, longitude, dataFinal, identifier, titlePopup;
 
          dataFinal = data.data;
 
          // loop
          for (i = 0; i < dataFinal.length; i++)
          {
+           // values
            identifier = dataFinal[i].id
-           latitude = +dataFinal[i].latitude;
-           longitude = +dataFinal[i].longitude;
+           titlePopup = dataFinal[i].displayName
+
+           latitude   = +dataFinal[i].latitude;
+           longitude  = +dataFinal[i].longitude;
 
            // obj marker
-           objMarker =  marker([ latitude, longitude ], this.iconBase).bindPopup('', {className: 'popupCl'});
+           objMarker =  marker([ latitude, longitude ], this.iconBase).bindPopup(titlePopup, {className: 'popupCl'});
 
            // push
            this.deviceArr.push(objMarker);
@@ -103,7 +98,6 @@ export class MapComponent implements OnInit {
     {
       this.lastSample(); // api call
     }, this.waitTimeLastSampleMs);
-
 
   }
 
