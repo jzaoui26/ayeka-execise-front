@@ -3,6 +3,7 @@ import {AuthService} from '../../_services/auth.service';
 import * as L from 'leaflet';
 import { icon, latLng, marker, tileLayer, Map } from 'leaflet';
 import { HttpClient } from '@angular/common/http';
+import {LatLngExpression} from 'leaflet';
 
 
 @Component({
@@ -12,7 +13,20 @@ import { HttpClient } from '@angular/common/http';
 })
 export class MapComponent implements OnInit {
 
-  mapLeaflet: Map;
+  public mapLeaflet: Map;
+
+  public deviceArr: any = [];
+  public deviceDataArr: any = [];
+
+  public intervalLastSample;
+  public waitTimeLastSampleMs: number = 10000;
+
+  // map config
+  public optionsMap: any = {};
+  public zoomBase: number = 8;
+  public centerLatLng:LatLngExpression = [ 31, 35.0519 ];
+
+  public deviceInProgress: any;
 
   // Define our base layers so we can reference them multiple times
   streetMaps = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -34,6 +48,7 @@ export class MapComponent implements OnInit {
   };
 
 
+
   // Layers control object with our two base layers and the three overlay layers
   layersControl = {
     baseLayers: {
@@ -42,11 +57,8 @@ export class MapComponent implements OnInit {
     }
   };
 
-  public optionsMap: any = {};
 
-  public deviceArr: any = [];
 
-  public interval;
 
   constructor(private authService: AuthService,  private http: HttpClient) {}
 
@@ -56,19 +68,18 @@ export class MapComponent implements OnInit {
 
   ngOnInit() {
 
-
-
     this.optionsMap = {
       layers: [ this.streetMaps ],
-      zoom: 10,
-      center: L.latLng([ 31.911, 35.0519 ])
+      zoom: this.zoomBase,
+      center: L.latLng(this.centerLatLng)
     };
 
-    this.http.get<any>('api/sites.php').subscribe(data => {
+    this.http.get<any>('api/sites').subscribe(data => {
          let i, objMarker, latitude, longitude, dataFinal, identifier;
 
          dataFinal = data.data;
 
+         // loop
          for (i = 0; i < dataFinal.length; i++)
          {
            identifier = dataFinal[i].id
@@ -76,30 +87,91 @@ export class MapComponent implements OnInit {
            longitude = +dataFinal[i].longitude;
 
            // obj marker
-           objMarker =  marker([ latitude, longitude ], this.iconBase).bindPopup('text', {className: 'popupCl'});
+           objMarker =  marker([ latitude, longitude ], this.iconBase).bindPopup('', {className: 'popupCl'});
 
            // push
            this.deviceArr.push(objMarker);
+           this.deviceDataArr.push(dataFinal[i]);
 
            this.deviceArr[i]._leaflet_id = identifier;
          }
       }
     );
 
-    this.interval = setInterval(() =>
+    // last sample
+    this.intervalLastSample = setInterval(() =>
     {
       this.lastSample(); // api call
-    }, 10000);
+    }, this.waitTimeLastSampleMs);
 
 
   }
 
-  lastSample() {
-    this.http.get<any>('api/last_sample.php').subscribe(data => {
 
-         this.mapLeaflet.panTo([ 32, 355])
-         this.deviceArr[1]._popup._content = 'djdjdj';
-         this.deviceArr[1].openPopup();
+  lastSample() {
+    this.http.get<any>('api/last_sample').subscribe(data => {
+         let i, dataFinal, latitude, longitude, titlePopup, s, sampleArr;
+         let sampleHtml = ''
+
+         dataFinal = data.data;
+
+         // loop
+         for (i = 0; i < this.deviceArr.length; i++)
+         {
+           // find the good device
+           if (dataFinal.deviceId == this.deviceArr[i]._leaflet_id)
+           {
+             this.deviceInProgress = this.deviceArr[i]
+
+             // invalide refresh
+             this.mapLeaflet.invalidateSize(true);
+
+             // center base
+             this.mapLeaflet.setView(this.centerLatLng, this.zoomBase)
+
+             // view with wait for effect
+             setInterval(() =>
+             {
+                 // invalide refresh
+                 this.mapLeaflet.invalidateSize(true);
+
+                 this.mapLeaflet.setView(this.deviceInProgress._latlng, this.zoomBase + 1)
+             }, 500);
+
+             // title
+             titlePopup = this.deviceDataArr[i].displayName
+
+             // sample
+             sampleArr = dataFinal.sample
+
+             // sample
+             for (s = 0; s < sampleArr.length; s++)
+             {
+
+               sampleHtml += '<div class="row">\n' +
+                     '            <div class="col-6">' +
+                     '            ' +sampleArr[s].displayName +
+                     '            </div>' +
+                     '            <div class="col-4">' +
+                     '            ' +sampleArr[s].value + sampleArr[s].units +
+                     '            </div>' +
+                               '</div>' ;
+             }
+
+             this.deviceInProgress._popup._content =
+               '<div class="row">\n' +
+               '            <div class="col-12 titlePopup">' +
+               '            ' +titlePopup+
+               '            </div>' +
+               '</div>' +
+               sampleHtml
+
+             this.deviceInProgress.openPopup();
+
+             return true;
+           }
+
+         }
       }
     );
   }
@@ -109,8 +181,8 @@ export class MapComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.interval) {
-      clearInterval(this.interval);
+    if (this.intervalLastSample) {
+      clearInterval(this.intervalLastSample);
     }
   }
 }

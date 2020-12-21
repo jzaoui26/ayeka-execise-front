@@ -7,4 +7,9 @@ html, body {
 
 .popupCl {
   margin-bottom: 60px !important;
+  min-width: 170px;
+}
+
+.titlePopup {
+  font-weight: bold;
 }

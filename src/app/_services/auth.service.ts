@@ -45,7 +45,7 @@ export class AuthService {
   // Verify user credentials on server to get token
   loginForm(data): Observable<LoginResponse> {
     return this.http
-      .post<LoginResponse>(this.basePath + 'login.php', data, this.httpOptions)
+      .post<LoginResponse>(this.basePath + 'login', data, this.httpOptions)
       .pipe(catchError(this.handleError));
   }
 

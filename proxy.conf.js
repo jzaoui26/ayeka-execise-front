@@ -8,7 +8,7 @@ const PROXY_CONFIG = {
     secure: false,
     changeOrigin: true,
     pathRewrite: {
-      "^/api": "/ayeka_exercise_back/"
+      "^/api": "/ayeka_exercise/api/"
     }
   }
 };
